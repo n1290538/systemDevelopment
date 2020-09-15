@@ -12,15 +12,13 @@ import javax.servlet.http.*;
 public class UserSelectServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
+//		try {
 			Connection users = null;
 			try {
-				Class.forName("com.mysql.jdbc.Driver");
-				users = DriverManager.getConnection("jdbc:mysql://localhost/servlet_db","root","");
+//				Class.forName("com.mysql.jdbc.Driver");
+//				users = DriverManager.getConnection("jdbc:mysql://localhost/servlet_db","root","");
+				users = DBConnection.openConnection();
 				ArrayList<Member> list = new ArrayList<Member>();
 				Statement state = users.createStatement();
 				ResultSet result = state.executeQuery("SELECT * FROM user_table");
@@ -31,17 +29,17 @@ public class UserSelectServlet extends HttpServlet {
 					list.add(new Member(id,name,picture));
 				}
 				result.close();
-				state.close();
-				users.close();
+				DBConnection.closeConnection(users, state);
+//				state.close();
+//				users.close();
 				request.setAttribute("list", list);
 					RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/select.jsp");
 				rd.forward(request, response);
-			}catch(ClassNotFoundException e) {
-				e.printStackTrace();
-			}
+//			}catch(ClassNotFoundException e) {
+//				e.printStackTrace();
+//			}
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
 	}
-
 }
